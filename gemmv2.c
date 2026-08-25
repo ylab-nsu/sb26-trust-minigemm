@@ -1,14 +1,19 @@
 #include "immintrin.h"
-/*@
-  axiomatic MatrixMult
-  {
-    inductive zeroed{L}(float* a, integer b, integer e){
+
+/*  inductive zeroed{L}(float* a, integer b, integer e){
     case zeroed_empty{L}:
         \forall float* a, integer b, e; b >= e ==> zeroed{L}(a, b, e);
     case zeroed_range{L}:
         \forall float* a, integer b, e; b < e ==>
         zeroed{L}(a, b, e-1) && a[e-1] == 0 ==> zeroed{L}(a,b,e);
-  }
+  } <- old version*/ 
+
+
+/*@
+  axiomatic MatrixMult
+  {
+    predicate zeroed{L}(float* a, integer b, integer e) = \forall integer i; b <= i < e ==> a[i] == 0;
+
     inductive DotProduction(float* A, float* B, integer to, 
                                    integer i, integer K, integer j, integer N, real res)
 	{
@@ -86,28 +91,35 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
 {
     /*@
         loop invariant 0 <= i <= M;
+        loop invariant N % 16 == 0;
         loop invariant MatrixResult{Here}(A, B, C, i, K, N, M);
         loop invariant COUNTER1 >= 0;
         loop invariant COUNTER2 >= 0;
-        loop assigns C[0 .. M*N-1], i, REG1[0 .. COUNTER1 * 8 + 7], REG2[0 .. COUNTER2 * 8 + 7], REG3[0 .. COUNTER3 * 8 + 7], REG4[0 .. COUNTER4 * 8 + 7], COUNTER1, COUNTER2, COUNTER3, COUNTER4;
+        loop invariant \valid(C + (0 .. M*N-1));
+        
         loop variant M-i;
+
     */
     for (int i = 0; i < M; ++i)
     {
         float * c = C + i * N;
         /*@
+            loop invariant N % 16 == 0;
             loop invariant 0 <= j <= N;
             loop invariant j % 8 == 0;
             loop invariant 0 <= i < M;
             loop invariant zeroed{Here}(C, i*N, i*N + j);
             loop invariant COUNTER1 >= 0;
-            
-            loop assigns j, C[i*N .. i*N + N - 1], REG1[0 .. COUNTER1 * 8 + 7], COUNTER1; 
+            loop invariant \valid(C + (0 .. M*N-1));
+
             loop variant N-j;
         */
         for (int j = 0; j < N; j += 8)
         {
+            /*@ assert \valid(c + j + 0 + (0 .. 7)); */
+            /*@ assert zeroed{Here}(C, i*N, i*N + j); */
             _mm256_storeu_ps(c + j + 0, _mm256_setzero_ps());
+            /*@ assert zeroed{Here}(C, i*N, i*N + j); */
             /*@ assert zeroed{Here}(C, i*N, i*N + j + 8);*/
         }
         /*@ assert zeroed{Here}(C, i*N, i*N + N);*/ 
@@ -118,7 +130,8 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
             loop invariant 0 <= i < M;
 			loop invariant \forall integer l; 0<=l<N ==> DotProduction(A, B, k, i, K, l, N, c[l]);
             loop invariant COUNTER2 >= 0;
-            loop assigns k, C[i*N .. i*N + N - 1], REG2[0 .. COUNTER2 * 8 + 7], REG3[0 .. COUNTER3 * 8 + 7], REG4[0 .. COUNTER4 * 8 + 7], COUNTER2, COUNTER3, COUNTER4;
+            loop invariant \valid(C + (0 .. M*N-1));
+
             loop variant K-k;
         */
         for (int k = 0; k < K; ++k)
@@ -132,7 +145,8 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
                 loop invariant j % 16 == 0;
                 loop invariant \forall integer q; 0 <= q < j ==> DotProduction(A, B, k+1, i, K, q, N, c[q]);
                 loop invariant \forall integer q; j <= q < N ==> DotProduction(A, B, k, i, K, q, N, c[q]);
-                loop assigns C[i*N .. i*N + N - 1], j, REG2[0 .. COUNTER2 * 8 + 7], REG3[0 .. COUNTER3 * 8 + 7], REG4[0 .. COUNTER4 * 8 + 7], COUNTER2, COUNTER3, COUNTER4;
+                loop invariant \valid(C + (0 .. M*N-1));
+
                 loop variant N-j;
             */
             for (int j = 0; j < N; j += 16)
