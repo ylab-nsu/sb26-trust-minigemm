@@ -65,6 +65,10 @@
 
 
 /*@
+  requires COUNTER1 == 0;
+  requires COUNTER2 == 0;
+  requires COUNTER3 == 0;
+  requires COUNTER4 == 0;
   requires \valid_read(A + (0 .. M*K-1));
   requires \valid_read(B + (0 .. K*N-1));
   requires \valid(C + (0 .. M*N-1));
@@ -83,6 +87,8 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
     /*@
         loop invariant 0 <= i <= M;
         loop invariant MatrixResult{Here}(A, B, C, i, K, N, M);
+        loop invariant COUNTER1 >= 0;
+        loop invariant COUNTER2 >= 0;
         loop assigns C[0 .. M*N-1], i, REG1[0 .. COUNTER1 * 8 + 7], REG2[0 .. COUNTER2 * 8 + 7], REG3[0 .. COUNTER3 * 8 + 7], REG4[0 .. COUNTER4 * 8 + 7], COUNTER1, COUNTER2, COUNTER3, COUNTER4;
         loop variant M-i;
     */
@@ -94,6 +100,7 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
             loop invariant j % 8 == 0;
             loop invariant 0 <= i < M;
             loop invariant zeroed{Here}(C, i*N, i*N + j);
+            loop invariant COUNTER1 >= 0;
             
             loop assigns j, C[i*N .. i*N + N - 1], REG1[0 .. COUNTER1 * 8 + 7], COUNTER1; 
             loop variant N-j;
@@ -110,6 +117,7 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
             loop invariant 0 <= k <= K;
             loop invariant 0 <= i < M;
 			loop invariant \forall integer l; 0<=l<N ==> DotProduction(A, B, k, i, K, l, N, c[l]);
+            loop invariant COUNTER2 >= 0;
             loop assigns k, C[i*N .. i*N + N - 1], REG2[0 .. COUNTER2 * 8 + 7], REG3[0 .. COUNTER3 * 8 + 7], REG4[0 .. COUNTER4 * 8 + 7], COUNTER2, COUNTER3, COUNTER4;
             loop variant K-k;
         */
