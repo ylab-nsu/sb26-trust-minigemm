@@ -87,6 +87,19 @@
     (\forall integer idx; 0 <= idx < N*to ==> \at(C[idx],L1) == \at(C[idx],L2)) &&
     0 < N && 0 < K && to <= M ==>
     MatrixResult{L1}(A,B,C,to,K,N,M) ==> MatrixResult{L2}(A,B,C,to,K,N,M);
+
+  // Один блок из 8: "если 8 колонок были верны на шаге to-1, а C
+  // обновили по формуле fmadd (av*B+C_old), то все 8 верны на шаге to".
+  // Заменяет 8 отдельных assert-ов (step0..step7 / step8..step15) одним.
+  lemma fmadd8_step{L1,L2}:
+    \forall float* A, float* B, float* C, integer to, i, K, j, N, real av;
+    0 < to && to <= K && 0 <= i && 0 <= j && j+8 <= N ==>
+    (\forall integer idx; 0 <= idx < K*(i+1) ==> \at(A[idx],L1) == \at(A[idx],L2)) &&
+    (\forall integer idx; 0 <= idx < N*K ==> \at(B[idx],L1) == \at(B[idx],L2)) &&
+    av == \at(A[i*K+(to-1)], L1) &&
+    (\forall integer q; 0 <= q < 8 ==> \at(DotProduction(A,B,to-1,i,K,j+q,N,C[j+q]),L1)) &&
+    (\forall integer q; 0 <= q < 8 ==> \at(C[j+q],L2) == av*\at(B[(to-1)*N+(j+q)],L1) + \at(C[j+q],L1))
+    ==> \forall integer q; 0 <= q < 8 ==> \at(DotProduction(A,B,to,i,K,j+q,N,C[j+q]),L2);
 */
 
 
@@ -166,30 +179,16 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
                /*@ assert b_eq: \forall integer q; j <= q < j+16 ==> b[q] == B[k*N + q]; */
                /*@ assert valid_b: \valid_read(b + j + (0 .. 15)); */
                /*@ assert valid_c: \valid(c + j + (0 .. 15)); */
-               /*@ assert c_at_j: DotProduction(A, B, k, i, K, j, N, c[j]); */
                /*@ assert a_eq: a.e[0] == A[i*K + k]; */
-               /*@ assert step0: DotProduction(A, B, k+1, i, K, j, N, c[j]+a.e[0]*b[j]); */
-               /*@ assert step1: DotProduction(A, B, k+1, i, K, j+1, N, c[j+1]+a.e[1]*b[j+1]); */
-               /*@ assert step2: DotProduction(A, B, k+1, i, K, j+2, N, c[j+2]+a.e[2]*b[j+2]); */
-               /*@ assert step3: DotProduction(A, B, k+1, i, K, j+3, N, c[j+3]+a.e[3]*b[j+3]); */
-               /*@ assert step4: DotProduction(A, B, k+1, i, K, j+4, N, c[j+4]+a.e[4]*b[j+4]); */
-               /*@ assert step5: DotProduction(A, B, k+1, i, K, j+5, N, c[j+5]+a.e[5]*b[j+5]); */
-               /*@ assert step6: DotProduction(A, B, k+1, i, K, j+6, N, c[j+6]+a.e[6]*b[j+6]); */
-               /*@ assert step7: DotProduction(A, B, k+1, i, K, j+7, N, c[j+7]+a.e[7]*b[j+7]); */
+                J16Top: ;
                 __mm256 r0 = _mm256_fmadd_ps(a,
                     _mm256_loadu_ps(b + j + 0), _mm256_loadu_ps(c + j + 0));
                 _mm256_storeu_ps(c + j + 0, r0);
-               /*@ assert step8: DotProduction(A, B, k+1, i, K, j+8, N, c[j+8]+a.e[0]*b[j+8]); */
-               /*@ assert step9: DotProduction(A, B, k+1, i, K, j+9, N, c[j+9]+a.e[1]*b[j+9]); */
-               /*@ assert step10: DotProduction(A, B, k+1, i, K, j+10, N, c[j+10]+a.e[2]*b[j+10]); */
-               /*@ assert step11: DotProduction(A, B, k+1, i, K, j+11, N, c[j+11]+a.e[3]*b[j+11]); */
-               /*@ assert step12: DotProduction(A, B, k+1, i, K, j+12, N, c[j+12]+a.e[4]*b[j+12]); */
-               /*@ assert step13: DotProduction(A, B, k+1, i, K, j+13, N, c[j+13]+a.e[5]*b[j+13]); */
-               /*@ assert step14: DotProduction(A, B, k+1, i, K, j+14, N, c[j+14]+a.e[6]*b[j+14]); */
-               /*@ assert step15: DotProduction(A, B, k+1, i, K, j+15, N, c[j+15]+a.e[7]*b[j+15]); */
+               /*@ assert block0: \forall integer q; 0<=q<8 ==> DotProduction(A, B, k+1, i, K, j+q, N, c[j+q]); */
                 __mm256 r1 = _mm256_fmadd_ps(a,
                     _mm256_loadu_ps(b + j + 8), _mm256_loadu_ps(c + j + 8));
                 _mm256_storeu_ps(c + j + 8, r1);
+               /*@ assert block1: \forall integer q; 0<=q<8 ==> DotProduction(A, B, k+1, i, K, j+8+q, N, c[j+8+q]); */
             }
             /*@ assert dot_done:  \forall integer l; 0<=l<N ==> DotProduction(A, B, k+1, i, K, l, N, c[l]);*/
         }

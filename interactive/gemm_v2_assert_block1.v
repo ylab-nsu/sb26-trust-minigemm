@@ -516,27 +516,26 @@ Theorem wp_goal :
     (S3:S1) (S4:S1) (S5:S1) (i3:Numbers.BinNums.Z) (i4:Numbers.BinNums.Z)
     (i5:Numbers.BinNums.Z) (i6:Numbers.BinNums.Z) (i7:Numbers.BinNums.Z)
     (S6:S1) (S7:S1),
-  let x := (16%Z + i6)%Z in
   let a3 := shift a2 0%Z in
-  let x1 := (i1 * i2)%Z in
-  let a4 := memcpy t1 a3 t7 a3 x1 in
-  let x2 := (i2 * i3)%Z in
-  let a5 := shift a2 x2 in
+  let x := (i1 * i2)%Z in
+  let a4 := memcpy t1 a3 t7 a3 x in
+  let x1 := (i2 * i3)%Z in
+  let a5 := shift a2 x1 in
   let a6 := memcpy a4 a5 t6 a5 i2 in
   let a7 := memcpy a6 a5 t5 a5 i2 in
   let a8 := memcpy a7 a5 t4 a5 i2 in
-  let x3 := (i * i3)%Z in
-  let a9 := shift a (i7 + x3)%Z in
+  let x2 := (i * i3)%Z in
+  let a9 := shift a (i7 + x2)%Z in
   let a10 := F1_e S5 in
-  let x4 := (i2 + x2)%Z in
-  let x5 := (i2 * i7)%Z in
-  let x6 := (i * i2)%Z in
-  let x7 := (i * i1)%Z in
+  let x3 := (i2 + x1)%Z in
+  let x4 := (i2 * i7)%Z in
+  let x5 := (i * i2)%Z in
+  let x6 := (i * i1)%Z in
   let a11 := shift a1 0%Z in
   let a12 := shift a 0%Z in
-  let a13 := shift a2 (i6 + x2)%Z in
-  let a14 := shift a1 (i6 + x5)%Z in
-  let a15 := shift a2 ((8%Z + i6)%Z + x2)%Z in
+  let a13 := shift a2 (i6 + x1)%Z in
+  let a14 := shift a1 (i6 + x4)%Z in
+  let a15 := shift a2 ((8%Z + i6)%Z + x1)%Z in
   let a16 := F1_e S7 in
   let a17 := F1_e S in
   let a18 := F1_e S2 in
@@ -544,28 +543,27 @@ Theorem wp_goal :
   let a20 := F1_e S3 in
   let a21 := F1_e S4 in
   let a22 := memcpy a8 a13 t3 a13 8%Z in
-  let x8 := (1%Z + i7)%Z in
+  let x7 := (1%Z + i7)%Z in
   let a23 := memcpy a22 a15 t2 a15 8%Z in
   ((ZArith.BinInt.Z.rem i6 16%Z) = 0%Z) ->
   ((ZArith.BinInt.Z.rem i5 8%Z) = 0%Z) ->
-  ((ZArith.BinInt.Z.rem i2 16%Z) = 0%Z) ->
-  ((ZArith.BinInt.Z.rem x 16%Z) = 0%Z) -> ((a8 a9) = (a10 0%Z)) ->
+  ((ZArith.BinInt.Z.rem i2 16%Z) = 0%Z) -> ((a8 a9) = (a10 0%Z)) ->
   (0%Z < i2)%Z -> (0%Z < i1)%Z -> (0%Z < i)%Z -> (0%Z <= i7)%Z ->
   (i7 < i)%Z -> (0%Z <= i6)%Z -> (i6 < i2)%Z -> (0%Z <= i5)%Z ->
   (i2 <= i5)%Z -> (0%Z <= i4)%Z -> (0%Z <= i3)%Z -> (i3 < i1)%Z ->
   (i6 <= i2)%Z -> (i5 <= i2)%Z -> (i3 <= i1)%Z -> (i7 <= i)%Z ->
   ((region (base a2)) <= 0%Z)%Z -> ((region (base a1)) <= 0%Z)%Z ->
-  ((region (base a)) <= 0%Z)%Z -> (x4 <= x1)%Z -> ((i2 + x5)%Z <= x6)%Z ->
-  ((i + x3)%Z <= x7)%Z -> ((i * (1%Z + i3)%Z)%Z <= x7)%Z ->
-  ((-16%Z)%Z <= i6)%Z -> (i4 <= (15%Z + i6)%Z)%Z -> (x <= i2)%Z ->
-  (((16%Z + i6)%Z + x5)%Z <= x6)%Z -> linked t -> valid_rd t a11 x6 ->
-  valid_rd t a12 x7 -> valid_rw t a3 x1 -> separated a11 x6 a3 x1 ->
-  separated a12 x7 a3 x1 -> P_MatrixResult t1 a a1 a2 0%Z i i2 i1 ->
-  valid_rd t a13 8%Z -> valid_rd t a14 8%Z -> valid_rd t a14 16%Z ->
-  valid_rw t a13 8%Z -> valid_rw t a13 16%Z -> valid_rd t a15 8%Z ->
-  valid_rd t (shift a1 ((8%Z + i6)%Z + x5)%Z) 8%Z -> valid_rw t a15 8%Z ->
-  P_zeroed a4 a2 x2 x2 -> P_MatrixResult a4 a a1 a2 i3 i i2 i1 ->
-  P_zeroed a6 a2 x2 (i5 + x2)%Z -> P_zeroed a6 a2 x2 x4 ->
+  ((region (base a)) <= 0%Z)%Z -> (x3 <= x)%Z -> ((i2 + x4)%Z <= x5)%Z ->
+  ((i + x2)%Z <= x6)%Z -> ((i * (1%Z + i3)%Z)%Z <= x6)%Z -> (i4 <= 7%Z)%Z ->
+  ((16%Z + i6)%Z <= i2)%Z -> (((16%Z + i6)%Z + x4)%Z <= x5)%Z -> linked t ->
+  valid_rd t a11 x5 -> valid_rd t a12 x6 -> valid_rw t a3 x ->
+  separated a11 x5 a3 x -> separated a12 x6 a3 x ->
+  P_MatrixResult t1 a a1 a2 0%Z i i2 i1 -> valid_rd t a13 8%Z ->
+  valid_rd t a14 8%Z -> valid_rd t a14 16%Z -> valid_rw t a13 8%Z ->
+  valid_rw t a13 16%Z -> valid_rd t a15 8%Z ->
+  valid_rd t (shift a1 ((8%Z + i6)%Z + x4)%Z) 8%Z -> valid_rw t a15 8%Z ->
+  P_zeroed a4 a2 x1 x1 -> P_MatrixResult a4 a a1 a2 i3 i i2 i1 ->
+  P_zeroed a6 a2 x1 (i5 + x1)%Z -> P_zeroed a6 a2 x1 x3 ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
    ((a16 i8) = (((a17 i8) * (a10 i8))%R + (a18 i8))%R)) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
@@ -573,145 +571,156 @@ Theorem wp_goal :
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
    ((a7 a9) = (a10 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 < i2)%Z ->
-   P_DotProduction a6 a a1 0%Z i3 i i8 i2 (a6 (shift a2 (i8 + x2)%Z))) ->
+   P_DotProduction a6 a a1 0%Z i3 i i8 i2 (a6 (shift a2 (i8 + x1)%Z))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a8 (shift a2 ((i6 + i8)%Z + x2)%Z)) = (a21 i8))) ->
+   ((a8 (shift a2 ((i6 + i8)%Z + x1)%Z)) = (a21 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a8 (shift a1 ((i6 + i8)%Z + x5)%Z)) = (a20 i8))) ->
+   ((a8 (shift a1 ((i6 + i8)%Z + x4)%Z)) = (a20 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 < i2)%Z ->
-   P_DotProduction a7 a a1 i7 i3 i i8 i2 (a7 (shift a2 (i8 + x2)%Z))) ->
+   P_DotProduction a7 a a1 i7 i3 i i8 i2 (a7 (shift a2 (i8 + x1)%Z))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a22 (shift a2 ((i6 + i8)%Z + x2)%Z)) = (a19 i8))) ->
+   ((a22 (shift a2 ((i6 + i8)%Z + x1)%Z)) = (a19 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a22 (shift a2 (((8%Z + i6)%Z + i8)%Z + x2)%Z)) = (a18 i8))) ->
+   ((a22 (shift a2 (((8%Z + i6)%Z + i8)%Z + x1)%Z)) = (a18 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a22 (shift a1 (((8%Z + i6)%Z + i8)%Z + x5)%Z)) = (a17 i8))) ->
+   ((a22 (shift a1 (((8%Z + i6)%Z + i8)%Z + x4)%Z)) = (a17 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (i6 <= i8)%Z -> (i8 < i2)%Z ->
-   P_DotProduction a8 a a1 i7 i3 i i8 i2 (a8 (shift a2 (i8 + x2)%Z))) ->
+   P_DotProduction a8 a a1 i7 i3 i i8 i2 (a8 (shift a2 (i8 + x1)%Z))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 < i6)%Z ->
-   P_DotProduction a8 a a1 x8 i3 i i8 i2 (a8 (shift a2 (i8 + x2)%Z))) ->
+   P_DotProduction a8 a a1 x7 i3 i i8 i2 (a8 (shift a2 (i8 + x1)%Z))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   ((a23 (shift a2 (((8%Z + i6)%Z + i8)%Z + x2)%Z)) = (a16 i8))) ->
+   ((a23 (shift a2 (((8%Z + i6)%Z + i8)%Z + x1)%Z)) = (a16 i8))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   P_DotProduction a22 a a1 x8 i3 i (i6 + i8)%Z i2
-   (a22 (shift a2 ((i6 + i8)%Z + x2)%Z))) ->
-  (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
-   P_DotProduction a23 a a1 x8 i3 i ((8%Z + i6)%Z + i8)%Z i2
-   (a23 (shift a2 (((8%Z + i6)%Z + i8)%Z + x2)%Z))) ->
-  P_DotProduction a23 a a1 x8 i3 i i4 i2 (a23 (shift a2 (i4 + x2)%Z)).
+   P_DotProduction a22 a a1 x7 i3 i (i6 + i8)%Z i2
+   (a22 (shift a2 ((i6 + i8)%Z + x1)%Z))) ->
+  P_DotProduction a23 a a1 x7 i3 i ((8%Z + i4)%Z + i6)%Z i2
+  (a23 (shift a2 (((8%Z + i4)%Z + i6)%Z + x1)%Z)).
 (* Why3 intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5
-        i6 i7 S6 S7 x a3 x1 a4 x2 a5 a6 a7 a8 x3 a9 a10 x4 x5 x6 x7 a11 a12
-        a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 x8 a23 h1 h2 h3 h4 h5 h6 h7
-        h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25
-        h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38 h39 h40 h41 h42
-        h43 h44 h45 h46 h47 h48 h49 h50 h51 h52 h53 h54 h55 h56 h57 h58 h59
-        h60 h61 h62 h63 h64 h65 h66. *)
+        i6 i7 S6 S7 a3 x a4 x1 a5 a6 a7 a8 x2 a9 a10 x3 x4 x5 x6 a11 a12 a13
+        a14 a15 a16 a17 a18 a19 a20 a21 a22 x7 a23 h1 h2 h3 h4 h5 h6 h7 h8 h9
+        h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26
+        h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38 h39 h40 h41 h42 h43
+        h44 h45 h46 h47 h48 h49 h50 h51 h52 h53 h54 h55 h56 h57 h58 h59 h60
+        h61 h62 h63. *)
 Require Import Psatz.
 Proof.
-intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5
-        i6 i7 S6 S7 x a3 x1 a4 x2 a5 a6 a7 a8 x3 a9 a10 x4 x5 x6 x7 a11 a12
-        a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 x8 a23 h1 h2 h3 h4 h5 h6 h7
-        h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25
-        h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38 h39 h40 h41 h42
-        h43 h44 h45 h46 h47 h48 h49 h50 h51 h52 h53 h54 h55 h56 h57 h58 h59
-        h60 h61 h62 h63 h64 h65 h66.
+intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5 i6 i7 S6
+S7 a3 x a4 x1 a5 a6 a7 a8 x2 a9 a10 x3 x4 x5 x6 a11 a12 a13 a14 a15 a16 a17
+a18 a19 a20 a21 a22 x7 a23 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14 h15
+h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33 h34
+h35 h36 h37 h38 h39 h40 h41 h42 h43 h44 h45 h46 h47 h48 h49 h50 h51 h52 h53
+h54 h55 h56 h57 h58 h59 h60 h61 h62 h63.
 
-(* ---- A/B are untouched by the first store (a8 -> a22) ---- *)
-assert (EqA22: forall idx:Z, (0<=idx)%Z -> (idx<x7)%Z ->
-  a22 (shift a idx) = a8 (shift a idx)).
+(* --- A/B frame across the FIRST store (a8 -> a22, block0's fmadd/store) --- *)
+assert (EqA1: forall idx:Z, (0<=idx)%Z -> (idx<x6)%Z -> a22 (shift a idx) = a8 (shift a idx)).
 { intros idx H1 H2. unfold a22.
   destruct (memcpy'def a8 a13 t3 a13 8%Z (shift a idx)) as [Hs _]. apply Hs.
   destruct a as [ba oa]. destruct a2 as [ba2 oa2].
-  unfold a13, a12, a3, separated, x2, x7 in *; cbn [base offset shift] in *.
-  destruct h38 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
+  unfold a13, a12, a3, separated, x1, x2, x6 in *; cbn [base offset shift] in *.
+  destruct h36 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
 
-assert (EqB22: forall idx:Z, (0<=idx)%Z -> (idx<x6)%Z ->
-  a22 (shift a1 idx) = a8 (shift a1 idx)).
+assert (EqB1: forall idx:Z, (0<=idx)%Z -> (idx<x5)%Z -> a22 (shift a1 idx) = a8 (shift a1 idx)).
 { intros idx H1 H2. unfold a22.
   destruct (memcpy'def a8 a13 t3 a13 8%Z (shift a1 idx)) as [Hs _]. apply Hs.
   destruct a1 as [ba oa]. destruct a2 as [ba2 oa2].
-  unfold a13, a11, a3, separated, x2, x6 in *; cbn [base offset shift] in *.
-  destruct h37 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
+  unfold a13, a11, a3, separated, x1, x4, x5 in *; cbn [base offset shift] in *.
+  destruct h35 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
 
-(* ---- A/B are untouched by the second store (a22 -> a23) ---- *)
-assert (EqA23: forall idx:Z, (0<=idx)%Z -> (idx<x7)%Z ->
-  a23 (shift a idx) = a22 (shift a idx)).
+(* --- A/B frame across the SECOND store (a22 -> a23, this block's fmadd/store) --- *)
+assert (EqA2: forall idx:Z, (0<=idx)%Z -> (idx<x6)%Z -> a23 (shift a idx) = a22 (shift a idx)).
 { intros idx H1 H2. unfold a23.
   destruct (memcpy'def a22 a15 t2 a15 8%Z (shift a idx)) as [Hs _]. apply Hs.
   destruct a as [ba oa]. destruct a2 as [ba2 oa2].
-  unfold a15, a12, a3, separated, x2, x7 in *; cbn [base offset shift] in *.
-  destruct h38 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
+  unfold a15, a12, a3, separated, x1, x2, x6 in *; cbn [base offset shift] in *.
+  destruct h36 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
 
-assert (EqB23: forall idx:Z, (0<=idx)%Z -> (idx<x6)%Z ->
-  a23 (shift a1 idx) = a22 (shift a1 idx)).
+assert (EqB2: forall idx:Z, (0<=idx)%Z -> (idx<x5)%Z -> a23 (shift a1 idx) = a22 (shift a1 idx)).
 { intros idx H1 H2. unfold a23.
   destruct (memcpy'def a22 a15 t2 a15 8%Z (shift a1 idx)) as [Hs _]. apply Hs.
   destruct a1 as [ba oa]. destruct a2 as [ba2 oa2].
-  unfold a15, a11, a3, separated, x2, x6 in *; cbn [base offset shift] in *.
-  destruct h37 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
+  unfold a15, a11, a3, separated, x1, x4, x5 in *; cbn [base offset shift] in *.
+  destruct h35 as [Hb|[Hb|[Hb|[Hb|Hb]]]]; nia. }
 
-(* ---- composed A/B frames a8 -> a23 ---- *)
-assert (EqA238: forall idx:Z, (0<=idx)%Z -> (idx<x7)%Z ->
-  a23 (shift a idx) = a8 (shift a idx)).
-{ intros idx H1 H2. rewrite EqA23 by assumption. apply EqA22; assumption. }
+assert (Eaddr: forall q:Z, shift a5 q = shift a2 (q+x1)%Z).
+{ intro q. unfold a5, shift; simpl. f_equal. lia. }
 
-assert (EqB238: forall idx:Z, (0<=idx)%Z -> (idx<x6)%Z ->
-  a23 (shift a1 idx) = a8 (shift a1 idx)).
-{ intros idx H1 H2. rewrite EqB23 by assumption. apply EqB22; assumption. }
-
-(* ---- C outside each store window is untouched ---- *)
-assert (EqC22: forall idx:Z, ((idx < i6)%Z \/ (i6+8 <= idx)%Z) ->
-  a22 (shift a2 (idx+x2)%Z) = a8 (shift a2 (idx+x2)%Z)).
-{ intros idx Hd. unfold a22.
-  destruct (memcpy'def a8 a13 t3 a13 8%Z (shift a2 (idx+x2)%Z)) as [Hs _]. apply Hs.
+(* --- C is unaffected by the FIRST store outside its own [i6,i6+8) window --- *)
+assert (EqC_a22: forall idx:Z, (0<=idx)%Z -> (i6+8<=idx)%Z -> (idx<i2)%Z ->
+  a22 (shift a2 (idx+x1)%Z) = a8 (shift a2 (idx+x1)%Z)).
+{ intros idx H1 H2 H3. unfold a22.
+  destruct (memcpy'def a8 a13 t3 a13 8%Z (shift a2 (idx+x1)%Z)) as [Hs _]. apply Hs.
   destruct a2 as [ba2 oa2].
-  unfold a13, separated, x2 in *; cbn [base offset shift] in *.
-  right;right;right. destruct Hd as [Hd|Hd]; [right|left]; lia. }
+  unfold a13, separated, x1 in *; cbn [base offset shift] in *.
+  right;right;right;left. lia. }
 
-assert (EqC23: forall idx:Z, ((idx < i6+8)%Z \/ (i6+16 <= idx)%Z) ->
-  a23 (shift a2 (idx+x2)%Z) = a22 (shift a2 (idx+x2)%Z)).
-{ intros idx Hd. unfold a23.
-  destruct (memcpy'def a22 a15 t2 a15 8%Z (shift a2 (idx+x2)%Z)) as [Hs _]. apply Hs.
-  destruct a2 as [ba2 oa2].
-  unfold a15, separated, x2 in *; cbn [base offset shift] in *.
-  right;right;right. destruct Hd as [Hd|Hd]; [right|left]; lia. }
+(* --- transfer the "old" DotProduction base fact from a8 to a22 for this block's columns --- *)
+assert (Hbase_forall2: forall i8:Z, (0<=i8)%Z -> (i8<=7)%Z ->
+  P_DotProduction a22 a a1 i7 i3 i (8+i6+i8)%Z i2 (a22 (shift a2 (8+i6+i8+x1)%Z))).
+{ intros i8 Ha Hb.
+  assert (Hbase8 := h60 (8+i6+i8)%Z ltac:(lia) ltac:(lia)).
+  assert (Hc22 := EqC_a22 (8+i6+i8)%Z ltac:(lia) ltac:(lia) ltac:(lia)).
+  rewrite Hc22.
+  refine (Q_dp_frame a22 a8 a a1 i7 i3 i (8+i6+i8)%Z i2
+            (a8 (shift a2 (8+i6+i8+x1)%Z)) _ _ _ _ Hbase8 _ _).
+  - lia.
+  - lia.
+  - lia.
+  - lia.
+  - intros i9 aa H1 H2. symmetry. apply EqB1; [assumption | nia].
+  - intros i9 aa H1 H2. symmetry. apply EqA1; [assumption | nia].
+}
 
-(* ---- three column ranges ---- *)
-assert (Hcase: (i4 < i6)%Z \/ ((i6 <= i4)%Z /\ (i4 < i6+8)%Z)
-               \/ ((i6+8 <= i4)%Z /\ (i4 <= 15+i6)%Z)) by lia.
+(* --- combine old-C/B/formula/new-C facts into the single-value fmadd equation --- *)
+assert (Hval_forall2: forall i8:Z, (0<=i8)%Z -> (i8<=7)%Z ->
+  (a22 (shift a2 (8+i6+i8+x1)%Z) + (a10 0%Z) * a22 (shift a1 (8+i6+i8+x4)%Z))%R
+  = a23 (shift a2 (8+i6+i8+x1)%Z)).
+{ intros i8 Ha Hb.
+  assert (Hc := h58 i8 Ha Hb).
+  assert (Hbv := h59 i8 Ha Hb).
+  assert (Hnew := h62 i8 Ha Hb).
+  assert (Hbroad0 := h52 0%Z ltac:(lia) ltac:(lia)).
+  assert (Hbroadi8 := h52 i8 Ha Hb).
+  assert (Hformula := h50 i8 Ha Hb).
+  assert (Hconst: a10 0%Z = a10 i8).
+  { rewrite <- Hbroad0. rewrite <- Hbroadi8. reflexivity. }
+  replace (8+i6+i8+x1)%Z with ((8%Z+i6)+i8+x1)%Z by ring.
+  replace (8+i6+i8+x4)%Z with ((8%Z+i6)+i8+x4)%Z by ring.
+  rewrite Hc, Hbv, Hconst.
+  rewrite Hnew, Hformula.
+  ring. }
 
-destruct Hcase as [HA | [[HB1 HB2] | [HC1 HC2]]].
+assert (Hgoal_forall2: forall i8:Z, (0<=i8)%Z -> (i8<=7)%Z ->
+  P_DotProduction a23 a a1 x7 i3 i (i8+(8+i6))%Z i2 (a23 (shift a5 (i8+(8+i6))%Z))).
+{ intros i8 Ha Hb.
+  refine (Q_fmadd8_step a23 a22 a a1 a5 x7 i3 i (8+i6)%Z i2 (a10 0%Z)
+            _ _ _ _ _ _ _ _ _ _ i8 Ha Hb).
+  - unfold x7. replace ((- (1))%Z + (1%Z+i7))%Z with i7 by lia.
+    assert (Ha22 := EqA1 (i7+x2)%Z ltac:(nia) ltac:(nia)).
+    unfold x2 in Ha22. rewrite Ha22. exact h4.
+  - unfold x7; lia.
+  - unfold x7; lia.
+  - lia.
+  - lia.
+  - lia.
+  - intros i9 aa H1 H2. symmetry. apply EqB2; [assumption | nia].
+  - intros i9 aa H1 H2. symmetry. apply EqA2; [assumption | nia].
+  - intros i9 xx H1 H2.
+    unfold xx.
+    rewrite (Eaddr (i9+(8+i6))%Z).
+    unfold x7. replace ((- (1))%Z + (1%Z+i7))%Z with i7 by lia.
+    replace (i9 + (8+i6))%Z with (8+i6+i9)%Z by ring.
+    apply Hbase_forall2; assumption.
+  - intros i9 xx H1 H2.
+    unfold xx.
+    rewrite (Eaddr (i9+(8+i6))%Z).
+    replace (i9+(8+i6)+i2*((- (1))+x7))%Z with ((8+i6+i9)+x4)%Z by (unfold x7,x4; ring).
+    replace (i9+(8+i6)+x1)%Z with (8+i6+i9+x1)%Z by ring.
+    rewrite <- (Hval_forall2 i9 H1 H2).
+    ring.
+}
 
-- (* columns before the 16-block: fact already at new depth in a8 *)
-  rewrite (EqC23 i4 ltac:(left; lia)).
-  rewrite (EqC22 i4 ltac:(left; lia)).
-  apply Q_dp_frame with (Mf321:=a8).
-  + unfold x8. lia.
-  + lia.
-  + lia.
-  + lia.
-  + apply h63; lia.
-  + intros i8 aa H1 H2. symmetry. apply EqB238; [assumption | nia].
-  + intros i8 aa H1 H2. symmetry. apply EqA238; [assumption | nia].
-
-- (* first half of the block: fact at new depth already in a22 *)
-  assert (Hb := h65 (i4-i6)%Z ltac:(lia) ltac:(lia)).
-  replace (i6+(i4-i6))%Z with i4 in Hb by ring.
-  rewrite (EqC23 i4 ltac:(left; lia)).
-  apply Q_dp_frame with (Mf321:=a22).
-  + unfold x8. lia.
-  + lia.
-  + lia.
-  + lia.
-  + exact Hb.
-  + intros i8 aa H1 H2. symmetry. apply EqB23; [assumption | nia].
-  + intros i8 aa H1 H2. symmetry. apply EqA23; [assumption | nia].
-
-- (* second half of the block: fact at new depth already in a23 *)
-  assert (Hc := h66 (i4-i6-8)%Z ltac:(lia) ltac:(lia)).
-  replace (8+i6+(i4-i6-8))%Z with i4 in Hc by ring.
-  exact Hc.
+replace ((8%Z+i4)%Z+i6)%Z with (i4+(8+i6))%Z by ring.
+rewrite <- (Eaddr (i4+(8+i6))%Z).
+apply Hgoal_forall2; assumption.
 Qed.
-
-
 

@@ -552,12 +552,12 @@ Theorem wp_goal :
   ((ZArith.BinInt.Z.rem x 16%Z) = 0%Z) -> ((a8 a9) = (a10 0%Z)) ->
   (0%Z < i2)%Z -> (0%Z < i1)%Z -> (0%Z < i)%Z -> (0%Z <= i7)%Z ->
   (i7 < i)%Z -> (0%Z <= i6)%Z -> (i6 < i2)%Z -> (0%Z <= i5)%Z ->
-  (i2 <= i5)%Z -> (0%Z <= i4)%Z -> (0%Z <= i3)%Z -> (i3 < i1)%Z ->
+  (i2 <= i5)%Z -> (i4 < i2)%Z -> (0%Z <= i3)%Z -> (i3 < i1)%Z ->
   (i6 <= i2)%Z -> (i5 <= i2)%Z -> (i3 <= i1)%Z -> (i7 <= i)%Z ->
   ((region (base a2)) <= 0%Z)%Z -> ((region (base a1)) <= 0%Z)%Z ->
   ((region (base a)) <= 0%Z)%Z -> (x4 <= x1)%Z -> ((i2 + x5)%Z <= x6)%Z ->
   ((i + x3)%Z <= x7)%Z -> ((i * (1%Z + i3)%Z)%Z <= x7)%Z ->
-  ((-16%Z)%Z <= i6)%Z -> (i4 <= (15%Z + i6)%Z)%Z -> (x <= i2)%Z ->
+  ((-16%Z)%Z <= i6)%Z -> (x <= i4)%Z -> (x <= i2)%Z ->
   (((16%Z + i6)%Z + x5)%Z <= x6)%Z -> linked t -> valid_rd t a11 x6 ->
   valid_rd t a12 x7 -> valid_rw t a3 x1 -> separated a11 x6 a3 x1 ->
   separated a12 x7 a3 x1 -> P_MatrixResult t1 a a1 a2 0%Z i i2 i1 ->
@@ -595,26 +595,30 @@ Theorem wp_goal :
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
    P_DotProduction a22 a a1 x8 i3 i (i6 + i8)%Z i2
    (a22 (shift a2 ((i6 + i8)%Z + x2)%Z))) ->
+  (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= (15%Z + i6)%Z)%Z ->
+   P_DotProduction a23 a a1 x8 i3 i i8 i2 (a23 (shift a2 (i8 + x2)%Z))) ->
   (forall (i8:Numbers.BinNums.Z), (0%Z <= i8)%Z -> (i8 <= 7%Z)%Z ->
    P_DotProduction a23 a a1 x8 i3 i ((8%Z + i6)%Z + i8)%Z i2
    (a23 (shift a2 (((8%Z + i6)%Z + i8)%Z + x2)%Z))) ->
-  P_DotProduction a23 a a1 x8 i3 i i4 i2 (a23 (shift a2 (i4 + x2)%Z)).
+  P_DotProduction a23 a a1 i7 i3 i i4 i2 (a23 (shift a2 (i4 + x2)%Z)).
 (* Why3 intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5
         i6 i7 S6 S7 x a3 x1 a4 x2 a5 a6 a7 a8 x3 a9 a10 x4 x5 x6 x7 a11 a12
         a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 x8 a23 h1 h2 h3 h4 h5 h6 h7
         h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25
         h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38 h39 h40 h41 h42
         h43 h44 h45 h46 h47 h48 h49 h50 h51 h52 h53 h54 h55 h56 h57 h58 h59
-        h60 h61 h62 h63 h64 h65 h66. *)
+        h60 h61 h62 h63 h64 h65 h66 h67. *)
 Require Import Psatz.
 Proof.
-intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5
-        i6 i7 S6 S7 x a3 x1 a4 x2 a5 a6 a7 a8 x3 a9 a10 x4 x5 x6 x7 a11 a12
-        a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 x8 a23 h1 h2 h3 h4 h5 h6 h7
-        h8 h9 h10 h11 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25
-        h26 h27 h28 h29 h30 h31 h32 h33 h34 h35 h36 h37 h38 h39 h40 h41 h42
-        h43 h44 h45 h46 h47 h48 h49 h50 h51 h52 h53 h54 h55 h56 h57 h58 h59
-        h60 h61 h62 h63 h64 h65 h66.
+intros a a1 a2 i i1 t t1 t2 t3 t4 t5 t6 t7 i2 S S2 S3 S4 S5 i3 i4 i5 i6 i7 S6
+S7 x a3 x1 a4 x2 a5 a6 a7 a8 x3 a9 a10 x4 x5 x6 x7 a11 a12 a13 a14 a15 a16
+a17 a18 a19 a20 a21 a22 x8 a23 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13 h14
+h15 h16 h17 h18 h19 h20 h21 h22 h23 h24 h25 h26 h27 h28 h29 h30 h31 h32 h33
+h34 h35 h36 h37 h38 h39 h40 h41 h42 h43 h44 h45 h46 h47 h48 h49 h50 h51 h52
+h53 h54 h55 h56 h57 h58 h59 h60 h61 h62 h63 h64 h65 h66 h67.
+
+(* the column lies strictly past the whole 16-wide block *)
+assert (Hi4: (i6+16 <= i4)%Z) by (unfold x in h30; lia).
 
 (* ---- A/B are untouched by the first store (a8 -> a22) ---- *)
 assert (EqA22: forall idx:Z, (0<=idx)%Z -> (idx<x7)%Z ->
@@ -676,42 +680,17 @@ assert (EqC23: forall idx:Z, ((idx < i6+8)%Z \/ (i6+16 <= idx)%Z) ->
   unfold a15, separated, x2 in *; cbn [base offset shift] in *.
   right;right;right. destruct Hd as [Hd|Hd]; [right|left]; lia. }
 
-(* ---- three column ranges ---- *)
-assert (Hcase: (i4 < i6)%Z \/ ((i6 <= i4)%Z /\ (i4 < i6+8)%Z)
-               \/ ((i6+8 <= i4)%Z /\ (i4 <= 15+i6)%Z)) by lia.
-
-destruct Hcase as [HA | [[HB1 HB2] | [HC1 HC2]]].
-
-- (* columns before the 16-block: fact already at new depth in a8 *)
-  rewrite (EqC23 i4 ltac:(left; lia)).
-  rewrite (EqC22 i4 ltac:(left; lia)).
-  apply Q_dp_frame with (Mf321:=a8).
-  + unfold x8. lia.
-  + lia.
-  + lia.
-  + lia.
-  + apply h63; lia.
-  + intros i8 aa H1 H2. symmetry. apply EqB238; [assumption | nia].
-  + intros i8 aa H1 H2. symmetry. apply EqA238; [assumption | nia].
-
-- (* first half of the block: fact at new depth already in a22 *)
-  assert (Hb := h65 (i4-i6)%Z ltac:(lia) ltac:(lia)).
-  replace (i6+(i4-i6))%Z with i4 in Hb by ring.
-  rewrite (EqC23 i4 ltac:(left; lia)).
-  apply Q_dp_frame with (Mf321:=a22).
-  + unfold x8. lia.
-  + lia.
-  + lia.
-  + lia.
-  + exact Hb.
-  + intros i8 aa H1 H2. symmetry. apply EqB23; [assumption | nia].
-  + intros i8 aa H1 H2. symmetry. apply EqA23; [assumption | nia].
-
-- (* second half of the block: fact at new depth already in a23 *)
-  assert (Hc := h66 (i4-i6-8)%Z ltac:(lia) ltac:(lia)).
-  replace (8+i6+(i4-i6-8))%Z with i4 in Hc by ring.
-  exact Hc.
+(* the old-depth fact for this column already holds in a8; carry it to a23 *)
+rewrite (EqC23 i4 ltac:(right; lia)).
+rewrite (EqC22 i4 ltac:(right; lia)).
+apply Q_dp_frame with (Mf321:=a8).
+- lia.
+- lia.
+- lia.
+- lia.
+- apply h62; lia.
+- intros i8 aa H1 H2. symmetry. apply EqB238; [assumption | nia].
+- intros i8 aa H1 H2. symmetry. apply EqA238; [assumption | nia].
 Qed.
-
 
 

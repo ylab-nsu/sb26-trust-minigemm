@@ -95,20 +95,6 @@ Axiom cdiv_closed_remainder :
   (0%Z <= (b - a)%Z)%Z /\ ((b - a)%Z < n)%Z ->
   ((ZArith.BinInt.Z.rem a n) = (ZArith.BinInt.Z.rem b n)) -> (a = b).
 
-Axiom Q_div8 :
-  forall (m:Numbers.BinNums.Z), ((ZArith.BinInt.Z.rem m 16%Z) = 0%Z) ->
-  ((ZArith.BinInt.Z.rem m 8%Z) = 0%Z).
-
-Axiom Q_mul_mono_nonneg :
-  forall (x:Numbers.BinNums.Z) (y:Numbers.BinNums.Z) (z:Numbers.BinNums.Z),
-  (x <= y)%Z -> (0%Z <= z)%Z -> ((x * z)%Z <= (y * z)%Z)%Z.
-
-Axiom Q_math_bounds :
-  forall (i:Numbers.BinNums.Z) (M:Numbers.BinNums.Z) (N:Numbers.BinNums.Z),
-  let x := (N * i)%Z in
-  (0%Z < N)%Z -> (0%Z <= i)%Z -> (i < M)%Z ->
-  (0%Z <= x)%Z /\ ((N + x)%Z <= (M * N)%Z)%Z.
-
 (* Why3 assumption *)
 Inductive addr :=
   | addr'mk : Numbers.BinNums.Z -> Numbers.BinNums.Z -> addr.
@@ -354,31 +340,132 @@ Inductive P_MatrixResult: (addr -> Reals.Rdefinitions.R) -> addr -> addr ->
       (0%Z < to)%Z -> P_RowResult Mf32 A B C N x K N ->
       P_MatrixResult Mf32 A B C x K N M -> P_MatrixResult Mf32 A B C to K N M.
 
+Axiom Q_mat_frame :
+  forall (Mf32:addr -> Reals.Rdefinitions.R)
+    (Mf321:addr -> Reals.Rdefinitions.R) (A:addr) (B:addr) (C:addr)
+    (K:Numbers.BinNums.Z) (N:Numbers.BinNums.Z) (M:Numbers.BinNums.Z)
+    (to:Numbers.BinNums.Z),
+  (0%Z < K)%Z -> (0%Z < N)%Z -> (to <= M)%Z ->
+  P_MatrixResult Mf321 A B C to K N M ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift A i in
+   (0%Z <= i)%Z -> (i < (K * to)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift B i in
+   (0%Z <= i)%Z -> (i < (K * N)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift C i in
+   (0%Z <= i)%Z -> (i < (N * to)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  P_MatrixResult Mf32 A B C to K N M.
+
+Axiom Q_row_frame :
+  forall (Mf32:addr -> Reals.Rdefinitions.R)
+    (Mf321:addr -> Reals.Rdefinitions.R) (A:addr) (B:addr) (C:addr)
+    (row:Numbers.BinNums.Z) (K:Numbers.BinNums.Z) (N:Numbers.BinNums.Z)
+    (to:Numbers.BinNums.Z),
+  (0%Z < N)%Z -> (to <= N)%Z -> (0%Z <= row)%Z ->
+  P_RowResult Mf321 A B C to row K N ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift B i in
+   (0%Z <= i)%Z -> (i < (K * N)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift A i in
+   (0%Z <= i)%Z -> (i < (K * (1%Z + row)%Z)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  (forall (i:Numbers.BinNums.Z),
+   let a := shift C (i + (N * row)%Z)%Z in
+   (0%Z <= i)%Z -> (i < N)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  P_RowResult Mf32 A B C to row K N.
+
+Axiom Q_dp_frame :
+  forall (Mf32:addr -> Reals.Rdefinitions.R)
+    (Mf321:addr -> Reals.Rdefinitions.R) (A:addr) (B:addr)
+    (to:Numbers.BinNums.Z) (i:Numbers.BinNums.Z) (K:Numbers.BinNums.Z)
+    (j:Numbers.BinNums.Z) (N:Numbers.BinNums.Z) (res:Reals.Rdefinitions.R),
+  (to <= K)%Z -> (0%Z <= i)%Z -> (0%Z <= j)%Z -> (j < N)%Z ->
+  P_DotProduction Mf321 A B to i K j N res ->
+  (forall (i1:Numbers.BinNums.Z),
+   let a := shift B i1 in
+   (0%Z <= i1)%Z -> (i1 < (K * N)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  (forall (i1:Numbers.BinNums.Z),
+   let a := shift A i1 in
+   (0%Z <= i1)%Z -> (i1 < (K * (1%Z + i)%Z)%Z)%Z -> ((Mf321 a) = (Mf32 a))) ->
+  P_DotProduction Mf32 A B to i K j N res.
+
+Axiom Q_div8 :
+  forall (m:Numbers.BinNums.Z), ((ZArith.BinInt.Z.rem m 16%Z) = 0%Z) ->
+  ((ZArith.BinInt.Z.rem m 8%Z) = 0%Z).
+
+Axiom Q_mul_mono_nonneg :
+  forall (x:Numbers.BinNums.Z) (y:Numbers.BinNums.Z) (z:Numbers.BinNums.Z),
+  (x <= y)%Z -> (0%Z <= z)%Z -> ((x * z)%Z <= (y * z)%Z)%Z.
+
+Axiom Q_math_bounds :
+  forall (i:Numbers.BinNums.Z) (M:Numbers.BinNums.Z) (N:Numbers.BinNums.Z),
+  let x := (N * i)%Z in
+  (0%Z < N)%Z -> (0%Z <= i)%Z -> (i < M)%Z ->
+  (0%Z <= x)%Z /\ ((N + x)%Z <= (M * N)%Z)%Z.
+
 (* Why3 goal *)
 Theorem wp_goal :
-  forall (a:addr) (a1:addr) (i:Numbers.BinNums.Z)
+  forall (a:addr) (a1:addr) (a2:addr) (i:Numbers.BinNums.Z)
     (t:addr -> Reals.Rdefinitions.R) (t1:addr -> Reals.Rdefinitions.R)
     (i1:Numbers.BinNums.Z) (i2:Numbers.BinNums.Z) (i3:Numbers.BinNums.Z)
-    (r:Reals.Rdefinitions.R) (i4:Numbers.BinNums.Z),
-  (0%Z <= i3)%Z -> (i3 < i1)%Z -> (0%Z <= i2)%Z -> (i4 <= i)%Z ->
-  P_DotProduction t1 a a1 i4 i2 i i3 i1 r ->
-  (forall (i5:Numbers.BinNums.Z),
-   let a2 := shift a1 i5 in
-   (0%Z <= i5)%Z -> (i5 < (i * i1)%Z)%Z -> ((t1 a2) = (t a2))) ->
-  (forall (i5:Numbers.BinNums.Z),
-   let a2 := shift a i5 in
-   (0%Z <= i5)%Z -> (i5 < (i * (1%Z + i2)%Z)%Z)%Z -> ((t1 a2) = (t a2))) ->
-  P_DotProduction t a a1 i4 i2 i i3 i1 r.
-(* Why3 intros a a1 i t t1 i1 i2 i3 r i4 h1 h2 h3 h4 h5 h6 h7. *)
+    (i4:Numbers.BinNums.Z) (i5:Numbers.BinNums.Z),
+  let x := ((-1%Z)%Z + i5)%Z in
+  let x1 := (i3 + i4)%Z in
+  (0%Z < i5)%Z -> (0%Z <= i4)%Z -> (0%Z <= i3)%Z -> (0%Z <= i2)%Z ->
+  (i5 <= i)%Z -> (i3 <= 7%Z)%Z -> ((8%Z + i4)%Z <= i1)%Z ->
+  (forall (i6:Numbers.BinNums.Z),
+   let a3 := shift a1 i6 in
+   (0%Z <= i6)%Z -> (i6 < (i * i1)%Z)%Z -> ((t1 a3) = (t a3))) ->
+  (forall (i6:Numbers.BinNums.Z),
+   let a3 := shift a i6 in
+   (0%Z <= i6)%Z -> (i6 < (i * (1%Z + i2)%Z)%Z)%Z -> ((t1 a3) = (t a3))) ->
+  (forall (i6:Numbers.BinNums.Z),
+   let x2 := (i4 + i6)%Z in
+   (0%Z <= i6)%Z -> (i6 <= 7%Z)%Z ->
+   P_DotProduction t1 a a1 x i2 i x2 i1 (t1 (shift a2 x2))) ->
+  (forall (i6:Numbers.BinNums.Z),
+   let a3 := shift a2 (i4 + i6)%Z in
+   (0%Z <= i6)%Z -> (i6 <= 7%Z)%Z ->
+   ((t a3) =
+    (((t1 (shift a (((-1%Z)%Z + i5)%Z + (i * i2)%Z)%Z)) *
+      (t1 (shift a1 ((i4 + i6)%Z + (i1 * x)%Z)%Z)))%R
+     + (t1 a3))%R)) ->
+  P_DotProduction t a a1 i5 i2 i x1 i1 (t (shift a2 x1)).
+(* Why3 intros a a1 a2 i t t1 i1 i2 i3 i4 i5 x x1 h1 h2 h3 h4 h5 h6 h7 h8 h9
+        h10 h11. *)
 Require Import Psatz.
 Proof.
-intros a a1 i t2 t3 i1 i2 i3 r i4 h1 h2 h3 h4 h5 h6 h7.
-induction h5.
-- apply Q_P_DotProduction_dotproduction_empty_range. assumption.
-- rewrite (h7 (- (1) + i + i1 * i2)%Z ltac:(nia) ltac:(nia)).
-  rewrite (h6 (i3 + i4 * x)%Z ltac:(nia) ltac:(nia)).
-  apply Q_P_DotProduction_dotproduction_positive_range.
-  + assumption.
-  + apply IHh5; try assumption; lia.
+intros a a1 a2 i t t1 i1 i2 i3 i4 i5 x x1 h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11.
+assert (Eaddr: (i4+i3)%Z = x1) by (unfold x1; ring).
+assert (DPbase := h10 i3 h3 h6).
+rewrite Eaddr in DPbase.
+assert (Hstep := Q_P_DotProduction_dotproduction_positive_range
+                    t1 a a1 i5 i2 i x1 i1 (t1 (shift a2 x1)) h1 DPbase).
+assert (Hform := h11 i3 h3 h6).
+rewrite Eaddr in Hform.
+assert (Htransfer: P_DotProduction t a a1 i5 i2 i x1 i1
+  (t1 (shift a2 x1) +
+   t1 (shift a (x + i2 * i)%Z) * t1 (shift a1 (x1 + i1 * x)%Z))%R).
+{ apply Q_dp_frame with (Mf321:=t1).
+  - lia.
+  - lia.
+  - nia.
+  - nia.
+  - exact Hstep.
+  - intros i6 H1 H2. apply h8; nia.
+  - intros i6 H1 H2. apply h9; nia.
+}
+assert (Hval: t (shift a2 x1) =
+  (t1 (shift a2 x1) +
+   t1 (shift a (x + i2 * i)%Z) * t1 (shift a1 (x1 + i1 * x)%Z))%R).
+{ rewrite Hform.
+  replace (i * i2)%Z with (i2 * i)%Z by ring.
+  unfold x.
+  ring. }
+rewrite Hval.
+exact Htransfer.
 Qed.
+
 
