@@ -12,6 +12,10 @@ case zeroed_range:
     zeroed_ind(a, b, e-1) && a[e-1] == 0 ==> zeroed_ind(a,b,e);
 }
 
+
+*/
+
+/*
 lemma zeroed_lin_to_ind:
     \forall float *a, integer b, integer e; zeroed(a, b, e) ==> zeroed_ind(a, b, e);
 

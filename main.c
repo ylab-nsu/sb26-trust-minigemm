@@ -56,41 +56,6 @@ lemma zeroed_contat:
 lemma zeroed_succ:
   \forall float *A, integer b, integer e; b < e && zeroed(A, b, e) && A[e] == 0 ==> zeroed(A, b, e+1);
 
-lemma zeroed_last:
-  \forall float *A, integer b, integer e; b < e+1 && zeroed(A, b, e+1) ==> A[e] == 0;
-
-lemma zeroed_first:
-  \forall float *A, integer b, integer e; b < e && zeroed(A, b, e) ==> A[b] == 0;
-
-lemma eq_index:
-  \forall float *A, integer j, integer k; A + k + j == A + j + k;
-
-lemma eq_cells:
-  \forall float *A, integer shift, integer b; (A + shift)[b] == A[shift + b];
-
-lemma zeroed_shift_0:
-  \forall float *A, integer b, integer e, integer shift; shift == 0 && zeroed(A+shift, b, e) 
-    ==> zeroed(A, b+shift, e+shift);
-
-lemma eq_cells_all:
-  \forall float *A, integer b, integer e, integer i; b <= i < e ==> (A + b)[i] == A[b + i];
-
-lemma shiftAAAAAA: 
-  \forall float *A, integer b, integer e, integer shift, integer i; b <= i < e && (A + shift)[i] == 0 
-    ==> A[i + shift] == 0;
-
-lemma zeroed_shift_comm:
-  \forall float *A, integer shift, integer b, integer e; shift >= 0 && 0 <= b < e && zeroed(A+shift, b, e) 
-  ==> zeroed(A, b+shift, e+shift);
-
-lemma zeroed_shift:
-  \forall float *A, integer shift, integer b, integer e; shift >= 0 && 0 <= b < e && zeroed(A+shift, b, e) 
-  ==> zeroed(A, shift+b, shift+e);
-
-lemma zeroed_shift_comm_inv:
-  \forall float *A, integer shift, integer b, integer e; shift >= 0 && 0 <= b < e && zeroed(A, b+shift, e+shift) 
-  ==> zeroed(A+shift, b, e);
-
 lemma zeroed_shift_inv:
   \forall float *A, integer shift, integer b, integer e; shift >= 0 && 0 <= b < e && zeroed(A, shift+b, shift+e)
   ==> zeroed(A+shift, b, e);
@@ -175,7 +140,6 @@ void gemm_v2(int M, int N, int K, const float * A, const float * B, float * C)
 
           setZero(c + j);
           /*@ assert zeroed(c+j, 0, 8); */
-          int q = 7;
           /*@ assert zeroed(c, j+0, j+8); */
           /*@ assert *(c + j) == 0; */
           /*@ assert c == C + i*N; */
