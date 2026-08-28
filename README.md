@@ -1,14 +1,14 @@
 # Используемые компоненты
-## Платформа для анализа и верификации программ
+### Платформа для анализа и верификации программ
 - Frama-С 33.0
-## Автоматические доказатели теорем (в том числе SMT-решатели)
+### Автоматические доказатели теорем (в том числе SMT-решатели)
 - Alt-Ergo 2.6.3
 - [CVC5 1.2.1](https://github.com/cvc5/cvc5/releases/download/cvc5-1.2.1/cvc5-Linux-x86_64-static.zip)
 - CVC4 1.8
 - [Vampire 4.5.1](https://github.com/vprover/vampire/releases/download/4.5.1/vampire_z3_Release_static_master_4764.zip)
 - [Z3 4.13.4](https://github.com/Z3Prover/z3/releases/download/z3-4.13.4/z3-4.13.4-x64-glibc-2.35.zip)
-## Интерактивные доказатели теорем
-- Coq (ныне Rocq) 8.20.1
+### Интерактивные доказатели теорем
+- Coq 8.20.1
 
 # Установка необходимых программ
 ## Debian и Ubuntu GNU/Linux
